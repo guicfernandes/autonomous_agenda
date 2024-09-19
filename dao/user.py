@@ -117,7 +117,7 @@ def delete_user(name: str = None, email: str = None, id: int = None) -> None:
         close_connection(connection=conn)
 
 
-def update_user(name: str, current_email: str, new_name: str = None, new_email: str = None) -> None:
+def update_user(name: str = None, current_email: str = None, id: int = None, new_name: str = None, new_email: str = None) -> None:
     """Function to update User client
 
     Args:
@@ -129,7 +129,10 @@ def update_user(name: str, current_email: str, new_name: str = None, new_email: 
     conn = start_connection()
     cursor = get_cursor(connection=conn)
     try:
-        user = get_user(user_name=name, user_email=current_email)
+        if not id:
+            user = get_user(user_name=name, user_email=current_email)
+        else:
+            user = get_user(user_id=id)
         if new_name:
             cursor.execute(
                 "UPDATE clientes SET nome = ? WHERE cliente_id = ?",
@@ -146,3 +149,4 @@ def update_user(name: str, current_email: str, new_name: str = None, new_email: 
         print(f"Erro ao atualizar usuário:\n{e}")
     finally:
         close_connection(connection=conn)
+        return get_user(user_id=user.get_user_id())
