@@ -19,6 +19,24 @@ def create_table_user() -> None:
     close_connection(connection=conn)
 
 
+def list_users() -> list:
+    """Function to list all users from database
+
+    Returns:
+        list: List of User objects
+    """
+    conn = start_connection()
+    cursor = get_cursor(connection=conn)
+    cursor.execute("SELECT * FROM clientes")
+    rows = cursor.fetchall()
+    close_connection(connection=conn)
+    users = []
+    for row in rows:
+        user = User(id=row[0], name=row[1], email=row[2])
+        users.append(user)
+    return users
+
+
 def get_user(user_id:int = None, user_name: str = None, user_email: str = None) -> User:
     """Function to get User object from database.
     If user_id is provided, we don't need user_name and user_email.
@@ -54,7 +72,7 @@ def get_user(user_id:int = None, user_name: str = None, user_email: str = None) 
         raise UserNotFoundException(user_name=user_name, user_email=user_email)
     return user
 
-def add_user(name: str, email: str) -> None:
+def create_user(name: str, email: str) -> None:
     """Function to add a client User to the database
 
     Args:
@@ -71,17 +89,22 @@ def add_user(name: str, email: str) -> None:
     close_connection(connection=conn)
 
 
-def delete_user(name: str, email: str) -> None:
+def delete_user(name: str = None, email: str = None, id: int = None) -> None:
     """Function to delete User client
 
     Args:
         name (str): Client name
         email (str): Client email
+        id (int): Client id. Defaults to None.
     """
     conn = start_connection()
     cursor = get_cursor(connection=conn)
-    try:
+    if not id:
         user = get_user(user_name=name, user_email=email)
+    else:
+        user = get_user(user_id=id)
+    try:
+        # user = get_user(user_name=name, user_email=email)
         cursor.execute(
             "DELETE FROM clientes WHERE cliente_id = ?",
             str(user.get_user_id())

@@ -1,5 +1,5 @@
 from dao.agendamento import get_user_appointment, list_appointments, add_appointment, create_table_appointment, delete_appointment
-from dao.user import get_user, add_user, create_table_user, delete_user
+from dao.user import get_user, create_user, create_table_user, delete_user
 from utils.exceptions import NoAppointmentsForSpecifiedPeriod
 from utils.reminders import send_reminder
 from utils.util import read_json_asset_file
@@ -19,7 +19,7 @@ def create_new_user(client_name, client_email):
     print('Deletando cliente se já existir')
     delete_user(client_name, client_email)
     print('Adicionando usuário ao banco de dados...')
-    add_user(name=client_name, email=client_email)
+    create_user(name=client_name, email=client_email)
     print("Usuário adicionado com sucesso!")
     time.sleep(10)
 
