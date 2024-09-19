@@ -1,8 +1,9 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from datetime import datetime, timedelta
-from utils.connection import start_connection, close_connection, get_cursor
+from dao.agendamento import list_appointments
+from utils.contants import BUSINESS_NAME, BUSINESS_OBJECT, BUSINESS_OWNER
+from utils.exceptions import NoAppointmentsForSpecifiedPeriod
 from utils.util import get_sender_information, get_smtp_data
 
 
@@ -38,25 +39,17 @@ def send_email(receiver: str, subject: str, body: str) -> None:
 def send_reminder() -> None:
     """Function to send reminder session to a client
     """
-    # Definir a hora atual e a hora de um dia antes
-    current_date = datetime.now()
-    reminder_date = current_date + timedelta(days=1)
-    conn = start_connection()
-    cursor = get_cursor(connection=conn)
-
-    cursor.execute("SELECT * FROM agendamentos WHERE data_agendamento BETWEEN ? AND ?", 
-              (current_date.strftime("%Y-%m-%d %H:%M"), reminder_date.strftime("%Y-%m-%d %H:%M")))
-    appointments = cursor.fetchall()
-    
-    for appointment in appointments:
-        client_id = appointment[1]
-        data_agendamento = appointment[2]
-        client = cursor.execute("SELECT * FROM clientes WHERE cliente_id = ?", client_id)
-        client_name = client[1]
-        client_email = client[2]
-        
-        subject = "Lembrete: Consulta de Psicologia Amanhã"
-        body = f"Olá {client_name},\n\nEste é um lembrete da sua consulta de psicologia agendada para {data_agendamento}.\nDetalhes: {detalhes}\n\nAtenciosamente,\nSua Clínica"
-        
-        send_email(client_email, subject, body)
-    close_connection(connection=conn)
+    # Select tomorrow's all appointments
+    try:
+        appointments = list_appointments(is_reminder=True)
+        for appointment in appointments:
+            client_name = appointment.get_client().get_user_name()
+            client_email = appointment.get_client().get_user_email()
+            data_agendamento = appointment.get_appointment_date()
+                
+            subject = f"Lembrete: {BUSINESS_OBJECT} Amanhã com {BUSINESS_OWNER}"
+            body = f"Olá {client_name},\n\nEste é um lembrete da sua {BUSINESS_OBJECT} agendada para {data_agendamento} com {BUSINESS_OWNER}.\n\nAtenciosamente,\n{BUSINESS_NAME}"
+                
+            send_email(receiver=client_email, subject=subject, body=body)    
+    except NoAppointmentsForSpecifiedPeriod as e:
+        print(f"Não há lembretes a serem enviados para amanhã. {e}")

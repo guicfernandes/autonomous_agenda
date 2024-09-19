@@ -1,8 +1,8 @@
 class User:
     def __init__(self, id, name, email) -> None:
-        id = id
-        name = name
-        email = email
+        self.id = id
+        self.name = name
+        self.email = email
 
     def get_user_id(self) -> int:
         """Method to get user id

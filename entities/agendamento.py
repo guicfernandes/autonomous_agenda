@@ -2,9 +2,9 @@ from entities.user import User
 
 class Appointment:
     def __init__(self, id: int, client: User, date: str) -> None:
-        id = id
-        client = client
-        date = date
+        self.id = id
+        self.client = client
+        self.date = date
     
     def get_appointment_id(self) -> int:
         """Method to get appointment id
