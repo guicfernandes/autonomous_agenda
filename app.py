@@ -14,7 +14,7 @@ def add_user():
         client_name = request.form['client_name']
         client_email = request.form['client_email']
         create_user(name=client_name, email=client_email)
-        return redirect(url_for('index'))
+        return redirect(url_for('index', added='true'))
     return render_template('user/add_user.html')
 
 @app.route('/update/<client_id>', methods=['GET', 'POST'])
@@ -22,14 +22,14 @@ def update_user_route(client_id):
     if request.method == 'POST':
         new_email = request.form['client_email']
         update_user(id=client_id, new_email=new_email)
-        return redirect(url_for('index'))
+        return redirect(url_for('index', updated='true'))
     user = get_user(user_id=client_id)
     return render_template('user/update_user.html', user=user)
 
 @app.route('/delete/<client_id>')
 def delete_user_route(client_id: str):
     delete_user(id=client_id)
-    return redirect(url_for('index'))
+    return redirect(url_for('index', deleted='true'))
 
 @app.route('/details/<client_id>')
 def details_user_route(client_id: str):
