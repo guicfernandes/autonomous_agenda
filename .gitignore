@@ -1,6 +1,7 @@
 # Custom
 assets/*
 *.db
+todos.*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
