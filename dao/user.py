@@ -1,5 +1,5 @@
 from entities.user import User
-from utils.connection import start_connection, get_cursor, close_connection
+from connection.db_connection import start_connection, get_cursor, close_connection
 from utils.exceptions import UserNotFoundException
 
 

@@ -1,6 +1,6 @@
 from entities.user import User
 from entities.agendamento import Appointment
-from utils.connection import start_connection, get_cursor, close_connection
+from connection.db_connection import start_connection, get_cursor, close_connection
 from utils.exceptions import AppointmentNotFoundException, UserNotFoundException, NoAppointmentsForSpecifiedPeriod
 from dao.user import get_user
 from datetime import datetime, timedelta
