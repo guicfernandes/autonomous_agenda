@@ -1,20 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>User Details</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
+{% block title %}User Details{% endblock %}
 
-<body>
-    <div class="container">
-        <h1 class="my-4">User Details</h1>
-        <p><strong>ID:</strong> {{ user.id }}</p>
-        <p><strong>Name:</strong> {{ user.name }}</p>
-        <p><strong>Email:</strong> {{ user.email }}</p>
-        <a href="{{ url_for('users.users_home') }}" class="btn btn-secondary">Back to User List</a>
-    </div>
-</body>
-
-</html>
+{% block content %}
+<h1 class="my-4">User Details</h1>
+<p><strong>ID:</strong> {{ user.id }}</p>
+<p><strong>Name:</strong> {{ user.name }}</p>
+<p><strong>Email:</strong> {{ user.email }}</p>
+<a href="{{ url_for('users.users_home') }}" class="btn btn-secondary">Back to User List</a>
+{% endblock %}

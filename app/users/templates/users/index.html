@@ -1,51 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>User List</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            if (urlParams.has('added')) {
-                alertMessage = 'Cliente adicionado com sucesso!';
-            }
-            if (urlParams.has('updated')) {
-                alertMessage = 'Cliente atualizado com sucesso!';
-            }
-            if (urlParams.has('deleted')) {
-                alertMessage = 'Cliente deletado com sucesso!';
-            }
-            if (alertMessage) {
-                alert(alertMessage);
-                // Remove the parameter from the URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-            }
-        });
-    </script>
-</head>
+{% block title %}User List{% endblock %}
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('added')) {
+            alertMessage = 'Cliente adicionado com sucesso!';
+        }
+        if (urlParams.has('updated')) {
+            alertMessage = 'Cliente atualizado com sucesso!';
+        }
+        if (urlParams.has('deleted')) {
+            alertMessage = 'Cliente deletado com sucesso!';
+        }
+        if (alertMessage) {
+            alert(alertMessage);
+            // Remove the parameter from the URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    });
+</script>
+{% endblock %}
 
-<body>
-    <div class="container">
-        <h1 class="my-4">User List</h1>
-        <a href="{{ url_for('users.add_user') }}" class="btn btn-primary mb-3">Add User</a>
-        <ul class="list-group">
-            {% for user in users %}
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-                {{ user.name }} - {{ user.email }}
-                <span>
-                    <a href="{{ url_for('users.details_user_route', client_id=user.id) }}"
-                        class="btn btn-primary btn-sm">Details</a>
-                    <a href="{{ url_for('users.update_user_route', client_id=user.id) }}"
-                        class="btn btn-secondary btn-sm">Update</a>
-                    <a href="{{ url_for('users.delete_user_route', client_id=user.id) }}"
-                        class="btn btn-danger btn-sm">Delete</a>
-                </span>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-</body>
-
-</html>
+{% block content %}
+<h1 class="my-4">User List</h1>
+<a href="{{ url_for('users.add_user') }}" class="btn btn-primary mb-3">Add User</a>
+<ul class="list-group">
+    {% for user in users %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ user.name }} - {{ user.email }}
+        <span>
+            <a href="{{ url_for('users.details_user_route', client_id=user.id) }}"
+                class="btn btn-primary btn-sm">Details</a>
+            <a href="{{ url_for('users.update_user_route', client_id=user.id) }}"
+                class="btn btn-secondary btn-sm">Update</a>
+            <a href="{{ url_for('users.delete_user_route', client_id=user.id) }}"
+                class="btn btn-danger btn-sm">Delete</a>
+        </span>
+    </li>
+    {% endfor %}
+</ul>
+{% endblock %}

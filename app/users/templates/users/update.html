@@ -1,24 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>Update User</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-</head>
+{% block title %}Update User{% endblock %}
 
-<body>
-    <div class="container">
-        <h1 class="my-4">Update User</h1>
-        <form method="post">
-            <div class="form-group">
-                <label for="{{ user.email }}">New Email:</label>
-                <input type="email" id="client_email" name="client_email" class="form-control"
-                    value="{{ client_email }}" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Update User</button>
-        </form>
+{% block content %}
+<h1 class="my-4">Update User</h1>
+<form method="post">
+    <div class="form-group">
+        <label for="{{ user.email }}">New Email:</label>
+        <input type="email" id="client_email" name="client_email" class="form-control" value="{{ client_email }}"
+            required>
     </div>
-</body>
-
-</html>
+    <button type="submit" class="btn btn-primary">Update User</button>
+</form>
+{% endblock %}
