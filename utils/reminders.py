@@ -36,7 +36,7 @@ def send_email(receiver: str, subject: str, body: str) -> None:
     except Exception as e:
         print(f"Falha ao enviar e-mail: {e}")
 
-def send_reminder() -> None:
+def send_reminder() -> bool:
     """Function to send reminder session to a client
     """
     # Select tomorrow's all appointments
@@ -50,6 +50,8 @@ def send_reminder() -> None:
             subject = f"Lembrete: {BUSINESS_OBJECT} Amanhã com {BUSINESS_OWNER}"
             body = f"Olá {client_name},\n\nEste é um lembrete da sua {BUSINESS_OBJECT} agendada para {data_agendamento} com {BUSINESS_OWNER}.\n\nAtenciosamente,\n{BUSINESS_NAME}"
                 
-            send_email(receiver=client_email, subject=subject, body=body)    
+            send_email(receiver=client_email, subject=subject, body=body)  
+            return True  
     except NoAppointmentsForSpecifiedPeriod as e:
         print(f"Não há lembretes a serem enviados para amanhã. {e}")
+        return False

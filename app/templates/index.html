@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+{% block script %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        let alertMessage = '';
+        if (urlParams.has('reminder_sent')) {
+            if (urlParams.get('reminder_sent') === 'true') {
+                alertMessage = 'Tomorrow\'s appointments reminders sent to clients!';
+            } else {
+                alertMessage = 'No reminders sent. No appointments for tomorrow.';
+            }
+        }
+        if (alertMessage) {
+            alert(alertMessage);
+            // Remove query parameters from URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+    });
+</script>
+{% endblock %}
+
+{% block content %}
+<h1 class="my-4">Welcome to Agenda App</h1>
+<p>This is the home page.</p>
+<img src="https://media.giphy.com/media/26FPnsRwwvWbIuYso/giphy.gif" alt="Cute Dog" class="img-fluid">
+{% endblock %}

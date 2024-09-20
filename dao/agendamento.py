@@ -90,7 +90,7 @@ def get_date_appointment(date: datetime) -> Appointment:
     return appointment
 
 
-def list_appointments(in_past: bool = False, in_future: bool = False, is_reminder: bool = False) -> list:
+def list_appointments(in_past: bool = False, in_future: bool = False, is_reminder: bool = False, is_today: bool = True) -> list:
     """Function to get and list all appointments.
     We could fetch only past events, only future events or all events from the database using bool variables.
 
@@ -121,6 +121,11 @@ def list_appointments(in_past: bool = False, in_future: bool = False, is_reminde
         cursor.execute(
             "SELECT * FROM agendamentos WHERE DATE(data_agendamento) = DATE(?)",
             (reminder_date.strftime("%Y-%m-%d %H:%M"),)
+        )
+    elif is_today:
+        cursor.execute(
+            "SELECT * FROM agendamentos WHERE DATE(data_agendamento) = DATE(?)",
+            (current_date.strftime("%Y-%m-%d %H:%M"),)
         )
     else:
         cursor.execute("SELECT * FROM agendamentos")
