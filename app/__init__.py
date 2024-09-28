@@ -1,13 +1,15 @@
 """Module to create the Flask app and define the routes"""
 
-from flask import Flask, render_template, redirect, request, url_for, flash
+from flask import Flask, flash, redirect, render_template, request, url_for
+
 from dao.agendamento import list_appointments
+from utils.exceptions import NoAppointmentsForSpecifiedPeriod
 from utils.reminders import send_reminder
+
+from .agenda.routes import agenda_bp
+from .appointments.routes import appointments_bp
 from .forms import LoginForm, RegisterForm
 from .users.routes import users_bp
-from .appointments.routes import appointments_bp
-from .agenda.routes import agenda_bp
-from utils.exceptions import NoAppointmentsForSpecifiedPeriod
 
 
 def create_app() -> Flask:
@@ -27,7 +29,6 @@ def create_app() -> Flask:
     # TODO: move routes to separate route.py module
     @app.route("/")
     @app.route("/index")
-    ## TODO: needs to change to home and create a index page
     def index():
         return render_template("index.html", logged=False)
 
