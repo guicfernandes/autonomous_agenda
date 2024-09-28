@@ -1,19 +1,20 @@
+"""Module to handle User client data access object (DAO) operations"""
+
 from entities.user import User
 from connection.db_connection import start_connection, get_cursor, close_connection
 from utils.exceptions import UserNotFoundException
 
 
 def create_table_user() -> None:
-    """Function the create Clientes table
-    """
+    """Function the create Clientes table"""
     conn = start_connection()
     cursor = get_cursor(connection=conn)
     # Criar a tabela de agendamentos se ainda nao existe
     cursor.execute(
-        '''
+        """
         CREATE TABLE IF NOT EXISTS clientes
         (cliente_id INTEGER PRIMARY KEY, nome TEXT, email TEXT)
-        '''
+        """
     )
     conn.commit()
     close_connection(connection=conn)
@@ -37,7 +38,10 @@ def list_users() -> list:
     return users
 
 
-def get_user(user_id:int = None, user_name: str = None, user_email: str = None) -> User:
+# TODO: delete this function and replace for a new one "get_user_by_id"
+def get_user(
+    user_id: int = None, user_name: str = None, user_email: str = None
+) -> User:
     """Function to get User object from database.
     If user_id is provided, we don't need user_name and user_email.
     Else, we need both user_name and user_email.
@@ -54,14 +58,14 @@ def get_user(user_id:int = None, user_name: str = None, user_email: str = None) 
     cursor = get_cursor(connection=conn)
     filter_id = True if user_id else False
     if filter_id:
-        cursor.execute(
-            "SELECT * FROM clientes WHERE cliente_id = ?",
-            (str(user_id),)
-        )
+        cursor.execute("SELECT * FROM clientes WHERE cliente_id = ?", (str(user_id),))
     else:
         cursor.execute(
             "SELECT * FROM clientes WHERE nome = ? AND email = ? LIMIT 1",
-            (user_name, user_email,)
+            (
+                user_name,
+                user_email,
+            ),
         )
     row = cursor.fetchone()
     close_connection(connection=conn)
@@ -72,6 +76,26 @@ def get_user(user_id:int = None, user_name: str = None, user_email: str = None) 
         raise UserNotFoundException(user_name=user_name, user_email=user_email)
     return user
 
+
+def validate_if_user_already_exists(email: str) -> bool:
+    """Function to validate if user already exists in the database
+
+    Args:
+        email (str): User email
+
+    Returns:
+        bool: True if user already exists, False otherwise
+    """
+    conn = start_connection()
+    cursor = get_cursor(connection=conn)
+    cursor.execute("SELECT * FROM clientes WHERE email = ?", (email,))
+    row = cursor.fetchone()
+    close_connection(connection=conn)
+    if row:
+        return True
+    return False
+
+
 def create_user(name: str, email: str) -> None:
     """Function to add a client User to the database
 
@@ -81,14 +105,12 @@ def create_user(name: str, email: str) -> None:
     """
     conn = start_connection()
     cursor = get_cursor(connection=conn)
-    cursor.execute(
-        "INSERT INTO clientes (nome, email) VALUES (?, ?)",
-        (name, email)
-    )
+    cursor.execute("INSERT INTO clientes (nome, email) VALUES (?, ?)", (name, email))
     conn.commit()
     close_connection(connection=conn)
 
 
+# TODO: replace "id" for "user_id"
 def delete_user(name: str = None, email: str = None, id: int = None) -> None:
     """Function to delete User client
 
@@ -106,18 +128,26 @@ def delete_user(name: str = None, email: str = None, id: int = None) -> None:
     try:
         # user = get_user(user_name=name, user_email=email)
         cursor.execute(
-            "DELETE FROM clientes WHERE cliente_id = ?",
-            str(user.get_user_id())
+            "DELETE FROM clientes WHERE cliente_id = ?", str(user.get_user_id())
         )
         conn.commit()
-        print(f"Usuário {name} de e-mail {email} deletado com sucesso do banco de dados.")
+        print(
+            f"Usuário {name} de e-mail {email} deletado com sucesso do banco de dados."
+        )
     except UserNotFoundException as e:
         print(f"Erro ao deletar usuário:\n{e}")
     finally:
         close_connection(connection=conn)
 
 
-def update_user(name: str = None, current_email: str = None, id: int = None, new_name: str = None, new_email: str = None) -> None:
+# TODO: replace "id" for "user_id"
+def update_user(
+    name: str = None,
+    current_email: str = None,
+    id: int = None,
+    new_name: str = None,
+    new_email: str = None,
+) -> None:
     """Function to update User client
 
     Args:
@@ -136,17 +166,19 @@ def update_user(name: str = None, current_email: str = None, id: int = None, new
         if new_name:
             cursor.execute(
                 "UPDATE clientes SET nome = ? WHERE cliente_id = ?",
-                (new_name, str(user.get_user_id()))
+                (new_name, str(user.get_user_id())),
             )
         if new_email:
             cursor.execute(
                 "UPDATE clientes SET email = ? WHERE cliente_id = ?",
-                (new_email, str(user.get_user_id()))
+                (new_email, str(user.get_user_id())),
             )
         conn.commit()
-        print(f"Usuário {name} de e-mail {current_email} atualizado com sucesso no banco de dados.")
+        print(
+            f"Usuário {name} de e-mail {current_email} atualizado com sucesso no banco de dados."
+        )
     except UserNotFoundException as e:
         print(f"Erro ao atualizar usuário:\n{e}")
     finally:
         close_connection(connection=conn)
-        return get_user(user_id=user.get_user_id())
+    return get_user(user_id=user.get_user_id())

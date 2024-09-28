@@ -4,7 +4,7 @@
 
 {% block content %}
 <h1 class="my-4">Update User</h1>
-<form method="post">
+<form name="update_user" method="post">
     <div class="form-group">
         <label for="{{ user.email }}">New Email:</label>
         <input type="email" id="client_email" name="client_email" class="form-control" value="{{ client_email }}"

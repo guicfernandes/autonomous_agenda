@@ -1,53 +1,70 @@
-from flask import Flask, render_template, redirect, url_for
+"""Module to create the Flask app and define the routes"""
+
+from flask import Flask, render_template, redirect, request, url_for, flash
 from dao.agendamento import list_appointments
 from utils.reminders import send_reminder
+from .forms import LoginForm, RegisterForm
+from .users.routes import users_bp
+from .appointments.routes import appointments_bp
+from .agenda.routes import agenda_bp
+from utils.exceptions import NoAppointmentsForSpecifiedPeriod
 
-def create_app():
+
+def create_app() -> Flask:
+    """Function to create the Flask app
+
+    Returns:
+        Flask: Flask application
+    """
     app = Flask(__name__)
-    app.secret_key = 'your_secret_key'  # Needed for flash messages
+    app.secret_key = "your_secret_key"  # Needed for flash messages
     # TODO: how to set the secret key in flask?
 
-    from .users.routes import users_bp
-    from .appointments.routes import appointments_bp
-    from .agenda.routes import agenda_bp
+    app.register_blueprint(users_bp, url_prefix="/users")
+    app.register_blueprint(appointments_bp, url_prefix="/appointments")
+    app.register_blueprint(agenda_bp, url_prefix="/agenda")
 
-    app.register_blueprint(users_bp, url_prefix='/users')
-    app.register_blueprint(appointments_bp, url_prefix='/appointments')
-    app.register_blueprint(agenda_bp, url_prefix='/agenda')
+    # TODO: move routes to separate route.py module
+    @app.route("/")
+    @app.route("/index")
+    ## TODO: needs to change to home and create a index page
+    def index():
+        return render_template("index.html", logged=False)
 
-    @app.route('/')
+    @app.route("/home")
     def home():
-        today_appointments = list_appointments(is_today=True)
-        return render_template('index.html', today_appointments=today_appointments)
+        try:
+            today_appointments = list_appointments(is_today=True)
+            return render_template("home.html", today_appointments=today_appointments)
+        except NoAppointmentsForSpecifiedPeriod as e:
+            print(f"No appointments found: {e.message}")
+            return render_template("home.html", no_appointments="true")
 
-    @app.route('/send_reminders')
+    @app.route("/login", methods=["GET", "POST"])
+    def login():
+        form = LoginForm()
+        if form.validate_on_submit():
+            if request.form.get("email") == "aaa@email.com":
+                flash("You are successfully logged in", category="success")
+                return redirect(url_for("home"))
+            else:
+                flash(
+                    "Login Unsuccessful. Please check email and password",
+                    category="danger",
+                )
+        return render_template("login.html", form=form, logged="false")
+
+    @app.route("/register", methods=["GET", "POST"])
+    def register():
+        form = RegisterForm()
+        return render_template("register.html", form=form, logged=False)
+
+    @app.route("/send_reminders")
     def send_reminders():
         if send_reminder():
-            # return redirect(url_for('home', reminder_sent='true'))
-            reminder_sent = 'true'
+            reminder_sent = "true"
         else:
-            # return redirect(url_for('home', reminder_error='true'))
-            reminder_sent = 'false'
-        return redirect(url_for('home', reminder_sent=reminder_sent))
+            reminder_sent = "false"
+        return redirect(url_for("home", reminder_sent=reminder_sent))
 
     return app
-"""
-    @app.route('/users')
-    def users():
-        # users = list_users()
-        # return render_template('user/index.html', users=users)
-        # return render_template('users/index.html')
-        return redirect(url_for('users.users_home', added='true'))
-
-    @app.route('/appointments')
-    def appointments():
-        # Implement the logic to fetch and display appointments
-        return render_template('appointments/index.html')
-
-    @app.route('/agenda')
-    def agenda():
-        # Implement the logic to fetch and display agenda
-        return render_template('agenda/index.html')
-    
-    return app
-"""
