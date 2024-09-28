@@ -44,19 +44,20 @@ def create_app() -> Flask:
     def login():
         form = LoginForm()
         if form.validate_on_submit():
+            # TODO: implement login logic to check if it was successful
             if request.form.get("email") == "aaa@email.com":
                 flash("You are successfully logged in", category="success")
                 return redirect(url_for("home"))
-            else:
-                flash(
-                    "Login Unsuccessful. Please check email and password",
-                    category="danger",
-                )
+            flash(
+                "Login Unsuccessful. Please check email and password",
+                category="danger",
+            )
         return render_template("login.html", form=form, logged="false")
 
     @app.route("/register", methods=["GET", "POST"])
     def register():
         form = RegisterForm()
+        # TODO: implement register logic
         return render_template("register.html", form=form, logged=False)
 
     @app.route("/send_reminders")
