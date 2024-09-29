@@ -1,6 +1,7 @@
 """Module to implement utility functions for the application."""
 
 import json
+from werkzeug.security import generate_password_hash
 
 
 def read_json_asset_file(file_name: str) -> dict:
@@ -39,3 +40,12 @@ def get_smtp_data() -> tuple[str, str]:
     smtp_server = data["smtp_server"]
     smtp_port = data["smtp_port"]
     return smtp_server, smtp_port
+
+
+def hash_password(password) -> str:
+    """Method to set user password
+
+    Returns:
+        password (str): User password hashed
+    """
+    return generate_password_hash(password)

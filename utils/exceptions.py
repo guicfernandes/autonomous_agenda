@@ -6,17 +6,15 @@ class UserNotFoundException(Exception):
 
     def __init__(
         self,
-        user_name: str,
-        user_email: str,
+        user_email: str = None,
         message: str = "User not found in the database",
     ):
-        self.user_name = user_name
         self.message = message
         self.user_email = user_email
         super().__init__(self.message)
 
     def __str__(self):
-        return f"{self.message}: {self.user_name}, {self.user_email}"
+        return f"{self.message}: {self.user_email}"
 
 
 class AppointmentNotFoundException(Exception):

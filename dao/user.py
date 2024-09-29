@@ -5,7 +5,7 @@ from connection.db_connection import start_connection, get_cursor, close_connect
 from utils.exceptions import UserNotFoundException
 
 
-def create_table_user() -> None:
+def create_table_clientes() -> None:
     """Function the create Clientes table"""
     conn = start_connection()
     cursor = get_cursor(connection=conn)
@@ -73,27 +73,8 @@ def get_user(
         user = User(id=row[0], name=row[1], email=row[2])
     else:
         user = None
-        raise UserNotFoundException(user_name=user_name, user_email=user_email)
+        raise UserNotFoundException(user_email=user_email)
     return user
-
-
-def validate_if_user_already_exists(email: str) -> bool:
-    """Function to validate if user already exists in the database
-
-    Args:
-        email (str): User email
-
-    Returns:
-        bool: True if user already exists, False otherwise
-    """
-    conn = start_connection()
-    cursor = get_cursor(connection=conn)
-    cursor.execute("SELECT * FROM clientes WHERE email = ?", (email,))
-    row = cursor.fetchone()
-    close_connection(connection=conn)
-    if row:
-        return True
-    return False
 
 
 def create_user(name: str, email: str) -> None:
