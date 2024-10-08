@@ -1,6 +1,9 @@
 """Module to create the Flask app and define the routes"""
 
-from flask import Flask, flash, redirect, render_template, request, url_for
+from flask import Flask, flash, redirect, render_template, url_for
+from flask_wtf.csrf import CSRFProtect
+from wtforms.validators import ValidationError
+from flask_talisman import Talisman
 
 from dao.agendamento import list_appointments
 from utils.exceptions import NoAppointmentsForSpecifiedPeriod
@@ -21,6 +24,12 @@ def create_app() -> Flask:
     app = Flask(__name__)
     app.secret_key = "your_secret_key"  # Needed for flash messages
     # TODO: how to set the secret key in flask?
+
+    # Enable CSRF protection
+    csrf = CSRFProtect(app)
+
+    # Add security headers
+    # Talisman(app)
 
     app.register_blueprint(users_bp, url_prefix="/users")
     app.register_blueprint(appointments_bp, url_prefix="/appointments")
@@ -45,15 +54,15 @@ def create_app() -> Flask:
     def login():
         form = LoginForm()
         if form.validate_on_submit():
-            # TODO: implement login logic to check if it was successful
-            if request.form.get("email") == "aaa@email.com":
-                flash("You are successfully logged in", category="success")
-                return redirect(url_for("home"))
-            flash(
-                "Login Unsuccessful. Please check email and password",
-                category="danger",
-            )
-        return render_template("login.html", form=form, logged="false")
+            try:
+                if form.validate_user(
+                    email=form.email.data, password=form.password.data
+                ):
+                    flash("You are successfully logged in", category="success")
+                    return redirect(url_for("home"))
+            except ValidationError as e:
+                flash(e, category="danger")
+        return render_template("login.html", form=form, logged=False)
 
     @app.route("/register", methods=["GET", "POST"])
     def register():

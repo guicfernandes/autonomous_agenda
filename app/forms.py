@@ -3,7 +3,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from dao.user import validate_if_user_already_exists
+from dao.users import get_user_by_email
+from utils.exceptions import UserNotFoundException
 
 
 class LoginForm(FlaskForm):
@@ -19,6 +20,26 @@ class LoginForm(FlaskForm):
     )
     remember_me = BooleanField("Remember Me")
     submit = SubmitField("Login")
+
+    def validate_user(self, email: str, password: str) -> None:
+        """Method to validate if user email and password are correct
+
+        Args:
+            email (str): Email to validate
+            password (str): Password to validate
+
+        Raises:
+            ValidationError: Exception raised when email and password are incorrect
+        """
+        try:
+            user = get_user_by_email(email)
+            if user.check_user_password(password=password):
+                return True
+            raise ValidationError("Login Unsuccessful. Please check email and password")
+        except UserNotFoundException as e:
+            raise ValidationError(
+                "Login Unsuccessful. Please check email and password"
+            ) from e
 
 
 class RegisterForm(FlaskForm):
@@ -54,7 +75,7 @@ class RegisterForm(FlaskForm):
         Raises:
             ValidationError: Exception raised when email already exists in the database
         """
-        if validate_if_user_already_exists(email.data):
+        if get_user_by_email(email=email.data):
             raise ValidationError(
                 "That email is already in use. Please choose a different one."
             )

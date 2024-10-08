@@ -21,7 +21,7 @@ class Users:
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
-        self.password = self.set_user_password(password) if password else None
+        self.password = password
         self.birth_date = birth_date
         self.created_at = created_at
         self.updated_at = updated_at
@@ -58,25 +58,6 @@ class Users:
         """
         return self.email
 
-    def set_user_password(self, password) -> None:
-        """Method to set user password
-
-        Args:
-            password (str): User password
-        """
-        self.password = generate_password_hash(password)
-
-    def check_user_password(self, password) -> bool:
-        """Method to check user password
-
-        Args:
-            password (str): User password
-
-        Returns:
-            bool: True if password is correct, False otherwise
-        """
-        return check_password_hash(self.password, password)
-
     def get_user_birth_date(self) -> str:
         """Method to get user birth date
 
@@ -100,3 +81,22 @@ class Users:
             str: User updated at
         """
         return self.updated_at
+
+    def set_user_password(self, password) -> None:
+        """Method to set user password
+
+        Args:
+            password (str): User password
+        """
+        self.password = generate_password_hash(password)
+
+    def check_user_password(self, password) -> bool:
+        """Method to check user password
+
+        Args:
+            password (str): User password
+
+        Returns:
+            bool: True if password is correct, False otherwise
+        """
+        return check_password_hash(self.password, password)

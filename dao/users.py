@@ -107,7 +107,10 @@ def get_user_by_email(email: str) -> Users:
             first_name=row[1],
             last_name=row[2],
             email=row[3],
+            password=row[4],
             birth_date=row[5],
+            created_at=row[6],
+            updated_at=row[7],
         )
         return user
     raise UserNotFoundException(user_email=email)
@@ -133,7 +136,10 @@ def get_user_by_id(user_id: int) -> Users:
             first_name=row[1],
             last_name=row[2],
             email=row[3],
+            password=row[4],
             birth_date=row[5],
+            created_at=row[6],
+            updated_at=row[7],
         )
         return user
     raise UserNotFoundException()
@@ -157,26 +163,10 @@ def get_all_users() -> list[Users]:
             first_name=row[1],
             last_name=row[2],
             email=row[3],
+            password=row[4],
             birth_date=row[5],
+            created_at=row[6],
+            updated_at=row[7],
         )
         users.append(user)
     return users
-
-
-def validate_if_user_already_exists(email: str) -> bool:
-    """Function to validate if user already exists in the database
-
-    Args:
-        email (str): User email
-
-    Returns:
-        bool: True if user already exists, False otherwise
-    """
-    conn = start_connection()
-    cursor = get_cursor(connection=conn)
-    cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
-    row = cursor.fetchone()
-    close_connection(connection=conn)
-    if row:
-        return True
-    return False
