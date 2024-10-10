@@ -17,6 +17,22 @@ class UserNotFoundException(Exception):
         return f"{self.message}: {self.user_email}"
 
 
+class UserRegistrationError(Exception):
+    """Exception raised when a user registration fails."""
+
+    def __init__(
+        self,
+        user_email: str = None,
+        message: str = "Error registering user",
+    ):
+        self.message = message
+        self.user_email = user_email
+        super().__init__(self.message)
+
+    def __str__(self):
+        return f"{self.message}: {self.user_email}"
+
+
 class AppointmentNotFoundException(Exception):
     """Exception raised when an appointment is not found in the database."""
 

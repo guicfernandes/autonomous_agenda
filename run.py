@@ -11,5 +11,10 @@ from app import create_app
 
 app = create_app()
 
+# print("FLASK_ENV:", os.getenv("FLASK_ENV"))
+# print("FLASK_DEBUG:", os.getenv("FLASK_DEBUG"))
+# print("FLASK_APP:", os.getenv("FLASK_APP"))
+# print("Debug mode:", app.debug)
+
 if __name__ == "__main__":
     app.run(debug=True)

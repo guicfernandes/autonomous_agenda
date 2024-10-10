@@ -67,7 +67,13 @@ def create_app() -> Flask:
     @app.route("/register", methods=["GET", "POST"])
     def register():
         form = RegisterForm()
-        # TODO: implement register logic
+        if form.validate_on_submit():
+            try:
+                if form.validate_registration():
+                    flash("Registration successful", category="success")
+                    return redirect(url_for("login"))
+            except ValidationError as e:
+                flash(e, category="danger")
         return render_template("register.html", form=form, logged=False)
 
     @app.route("/send_reminders")

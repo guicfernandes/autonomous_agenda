@@ -6,36 +6,48 @@
 <h1 class="my-4">Sign up - Registration</h1>
 <form name="register" method="post" novalidate>
     {{ form.hidden_tag() }}
-
-    {{ form.first_name.label }}
-    {{ form.first_name(class="form-control") }}
-    {% for error in form.first_name.errors %}
-    <span class="text-danger">{{ error }}</span>
-    {% endfor %}
-
-    {{ form.last_name.label }}
-    {{ form.last_name(class="form-control") }}
-    {% for error in form.last_name.errors %}
-    <span class="text-danger">{{ error }}</span>
-    {% endfor %}
-
-    {{ form.email.label }}
-    {{ form.email(class="form-control") }}
-    {% for error in form.email.errors %}
-    <span class="text-danger">{{ error }}</span>
-    {% endfor %}
-
-    {{ form.password.label }}
-    {{ form.password(class="form-control") }}
-    {% for error in form.password.errors %}
-    <span class="text-danger">{{ error }}</span>
-    {% endfor %}
-
-    {{ form.confirm_password.label }}
-    {{ form.confirm_password(class="form-control") }}
-    {% for error in form.confirm_password.errors %}
-    <span class="text-danger">{{ error }}</span>
-    {% endfor %}
+    <div class="form-group">
+        {{ form.first_name.label }}
+        {{ form.first_name(class="form-control") }}
+        {% for error in form.first_name.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        {{ form.last_name.label }}
+        {{ form.last_name(class="form-control") }}
+        {% for error in form.last_name.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        {{ form.email.label }}
+        {{ form.email(class="form-control") }}
+        {% for error in form.email.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        {{ form.password.label }}
+        {{ form.password(class="form-control") }}
+        {% for error in form.password.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        {{ form.confirm_password.label }}
+        {{ form.confirm_password(class="form-control") }}
+        {% for error in form.confirm_password.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
+    <div class="form-group">
+        {{ form.birth_date.label }}
+        {{ form.birth_date(class="form-control", type="date") }}
+        {% for error in form.birth_date.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+    </div>
     <br>
     {{ form.submit(class="btn btn-primary") }}
 </form>

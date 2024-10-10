@@ -1,10 +1,11 @@
 """Module to create forms for the application"""
 
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, DateField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
-from dao.users import get_user_by_email
-from utils.exceptions import UserNotFoundException
+from dao.users import get_user_by_email, create_user
+from utils.exceptions import UserNotFoundException, UserRegistrationError
+from utils.util import hash_password
 
 
 class LoginForm(FlaskForm):
@@ -16,7 +17,7 @@ class LoginForm(FlaskForm):
 
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField(
-        "Password", validators=[DataRequired(), Length(min=6, max=20)]
+        "Password", validators=[DataRequired(), Length(min=6, max=30)]
     )
     remember_me = BooleanField("Remember Me")
     submit = SubmitField("Login")
@@ -58,24 +59,38 @@ class RegisterForm(FlaskForm):
     )
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField(
-        "Password", validators=[DataRequired(), Length(min=6, max=20)]
+        "Password", validators=[DataRequired(), Length(min=6, max=30)]
     )
     confirm_password = PasswordField(
         "Confirm Password",
-        validators=[DataRequired(), Length(min=6, max=20), EqualTo("password")],
+        validators=[DataRequired(), Length(min=6, max=30), EqualTo("password")],
     )
+    birth_date = DateField("Birth Date", format="%Y-%m-%d", validators=[DataRequired()])
     submit = SubmitField("Register Now")
 
-    def validate_email(self, email: str) -> None:
-        """Method to validate if user email already exists in the database
-
-        Args:
-            email (str): Email to validate
+    def validate_registration(self) -> bool:
+        """Method to validate user registration
 
         Raises:
-            ValidationError: Exception raised when email already exists in the database
+            ValidationError: Exception raised when user already exists
+            ValidationError: Exception raised when user registration fails
+
+        Returns:
+            bool: True if registration is successful
         """
-        if get_user_by_email(email=email.data):
-            raise ValidationError(
-                "That email is already in use. Please choose a different one."
-            )
+        try:
+            user = get_user_by_email(self.email.data)
+            if user:
+                raise ValidationError("Email already registered")
+        except UserNotFoundException:
+            try:
+                create_user(
+                    first_name=self.first_name.data,
+                    last_name=self.last_name.data,
+                    email=self.email.data,
+                    password=hash_password(self.password.data),
+                    birth_date=self.birth_date.data.strftime("%Y-%m-%d"),
+                )
+                return True
+            except Exception as e:
+                raise UserRegistrationError(user_email=self.email.data) from e
